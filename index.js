@@ -3,7 +3,7 @@ const CURRENT_WEATHER_API_URL =
 const WEEK_WEATHER_API_URL =
   "https://api.openweathermap.org/data/2.5/forecast?units=metric";
 const GET_LOCATION_CITY =
-  "http://api.openweathermap.org/geo/1.0/reverse?limit=1";
+  "https://api.openweathermap.org/geo/1.0/reverse?limit=1";
 const API_KEY = "25d3d20e662a97750adc081ed3de752d";
 
 const weekDays = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
@@ -67,6 +67,8 @@ const getCurrentWeather = (city) => {
       );
     })
     .catch((error) => {
+      document.querySelector(".weather-info-wrapper").style.display = "none";
+      document.querySelector(".error-message").style.display = "block";
       document.querySelector(".error-message-title").innerHTML =
         "Something went wrong...";
     });
@@ -95,6 +97,8 @@ const getWeekWeather = (city) => {
       fillInWeatherTable(filteredData);
     })
     .catch((error) => {
+      document.querySelector(".weather-info-wrapper").style.display = "none";
+      document.querySelector(".error-message").style.display = "block";
       document.querySelector(".error-message-title").innerHTML =
         "Something went wrong...";
     });
@@ -129,6 +133,8 @@ window.addEventListener("DOMContentLoaded", (event) => {
         getWeekWeather(data[0].name);
       })
       .catch((error) => {
+        document.querySelector(".weather-info-wrapper").style.display = "none";
+        document.querySelector(".error-message").style.display = "block";
         document.querySelector(".error-message-title").innerHTML =
           "Something went wrong...";
       });
