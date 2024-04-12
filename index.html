@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Weather App</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="index.js"></script>
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="search-box">
+                <input placeholder="Enter city name..." spellcheck="false" id="cityName"/>
+                <button class="search-button" id="cityButton"><img src="images/search.png"></button>
+            </div>
+            <div class="content-wrapper">
+                <div class="weather-info-wrapper">
+                    <div class="weather-info">
+                        <div class="weather-icon-wrapper"> 
+                            <img class="weather-icon" src="" id="weatherIcon">
+                        </div>
+                        <div class="temperature-header">
+                            <h1 id="temperature"></h1>
+                            <h2 id="city"></h2>
+                        </div>
+                    </div>
+                    <div class="weather-details">
+                        <div class="weather-details-item">
+                            <img src="images/thermometer.png">
+                            <div>
+                                <p id="feelsLike"></p>
+                                <p>Feels like</p>
+                            </div>
+                        </div>
+                        <div class="weather-details-item">
+                            <img src="images/humidity.png">
+                            <div>
+                                <p id="humidity"></p>
+                                <p>Humidity</p>
+                            </div>
+                        </div>
+                        <div class="weather-details-item">
+                            <img src="images/wind.png">
+                            <div>
+                                <p id="wind"></p>
+                                <p>Wind Speed</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="week-forecast-container">
+                    <table id="weatherTable" class="weather-table">
+                    </table>
+                    </div>
+                </div>
+                <div class="loader" id="weatherInfoLoader"></div>
+                <div class="default-image" id="defaultImage"><img src="images/default.png"></div>
+                <div class="error-message">
+                    <h1 class="error-message-title"><h1>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
