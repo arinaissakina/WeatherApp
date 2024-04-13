@@ -12,6 +12,39 @@ const getWeatherIconUrl = (code) => {
   return `https://openweathermap.org/img/wn/${code}@2x.png`;
 };
 
+const showLoader = () => {
+  [...document.getElementById("content").children].forEach((el) => {
+    el.id === "weatherInfoLoader"
+      ? (el.style.display = "block")
+      : (el.style.display = "none");
+  });
+};
+
+const showDefaultImage = () => {
+  [...document.getElementById("content").children].forEach((el) => {
+    el.id === "defaultImage"
+      ? (el.style.display = "block")
+      : (el.style.display = "none");
+  });
+};
+
+const showErrorMessage = (message) => {
+  [...document.getElementById("content").children].forEach((el) => {
+    el.id === "errorMessage"
+      ? (el.style.display = "block")
+      : (el.style.display = "none");
+  });
+  document.getElementById("errorMessageTitle").innerHTML = message;
+};
+
+const showWeatherInfo = () => {
+  [...document.getElementById("content").children].forEach((el) => {
+    el.id === "weatherInfo"
+      ? (el.style.display = "block")
+      : (el.style.display = "none");
+  });
+};
+
 const fillInWeatherTable = (data) => {
   let table = document.getElementById("weatherTable");
 
@@ -42,16 +75,16 @@ const getCurrentWeather = (city) => {
   fetch(CURRENT_WEATHER_API_URL + `&appid=${API_KEY}&q=${city}`)
     .then((res) => res.json())
     .then((data) => {
-      document.getElementById("weatherInfoLoader").style.display = "none";
+      showLoader();
       if (data.cod == 404) {
-        document.querySelector(".weather-info-wrapper").style.display = "none";
-        document.querySelector(".error-message").style.display = "block";
-        document.querySelector(".error-message-title").innerHTML =
-          "Invalid city name! Try Again";
+        showErrorMessage("Invalid city name! Try Again");
+        localStorage.setItem("currentCity", "");
         return;
       }
-      document.getElementById("weatherInfoLoader").style.display = "none";
-      document.querySelector(".weather-info-wrapper").style.display = "block";
+
+      localStorage.setItem("currentCity", city);
+      document.getElementById("weatherTable").innerHTML = "";
+      showWeatherInfo();
 
       document.getElementById("city").innerHTML = data.name;
       document.getElementById("temperature").innerHTML = `${Math.round(
@@ -67,10 +100,9 @@ const getCurrentWeather = (city) => {
       );
     })
     .catch((error) => {
-      document.querySelector(".weather-info-wrapper").style.display = "none";
-      document.querySelector(".error-message").style.display = "block";
-      document.querySelector(".error-message-title").innerHTML =
-        "Something went wrong...";
+      showLoader();
+      showErrorMessage("Something went wrong...");
+      localStorage.setItem("currentCity", "");
     });
 };
 
@@ -78,17 +110,16 @@ const getWeekWeather = (city) => {
   fetch(WEEK_WEATHER_API_URL + `&appid=${API_KEY}&q=${city}`)
     .then((res) => res.json())
     .then((data) => {
-      document.getElementById("weatherInfoLoader").style.display = "none";
+      showLoader();
       if (data.cod == 404) {
-        document.querySelector(".weather-info-wrapper").style.display = "none";
-        document.querySelector(".error-message").style.display = "block";
-        document.querySelector(".error-message-title").innerHTML =
-          "Invalid city name! Try Again";
+        showErrorMessage("Invalid city name! Try Again");
+        localStorage.setItem("currentCity", "");
         return;
       }
 
-      document.getElementById("weatherInfoLoader").style.display = "none";
-      document.querySelector(".weather-info-wrapper").style.display = "block";
+      localStorage.setItem("currentCity", city);
+      document.getElementById("weatherTable").innerHTML = "";
+      showWeatherInfo();
 
       let filteredData = data.list.filter(
         (el) => new Date(el.dt_txt).getHours() === 15
@@ -97,10 +128,9 @@ const getWeekWeather = (city) => {
       fillInWeatherTable(filteredData);
     })
     .catch((error) => {
-      document.querySelector(".weather-info-wrapper").style.display = "none";
-      document.querySelector(".error-message").style.display = "block";
-      document.querySelector(".error-message-title").innerHTML =
-        "Something went wrong...";
+      showLoader();
+      showErrorMessage("Something went wrong...");
+      localStorage.setItem("currentCity", "");
     });
 };
 
@@ -108,9 +138,10 @@ window.addEventListener("DOMContentLoaded", (event) => {
   const searchField = document.getElementById("cityName");
   const searchButton = document.getElementById("cityButton");
 
+  localStorage.setItem("currentCity", "");
+
   if (navigator.geolocation) {
-    document.getElementById("defaultImage").style.display = "none";
-    document.getElementById("weatherInfoLoader").style.display = "block";
+    showLoader();
     navigator.geolocation.getCurrentPosition(successFunction, errorFunction);
   } else {
     console.log("Geolocation is not supported by this browser.");
@@ -121,34 +152,42 @@ window.addEventListener("DOMContentLoaded", (event) => {
   }
 
   function errorFunction() {
-    document.getElementById("defaultImage").style.display = "block";
-    document.getElementById("weatherInfoLoader").style.display = "none";
+    showDefaultImage();
   }
 
   const getLocationCity = (lat, lon) => {
     fetch(GET_LOCATION_CITY + `&appid=${API_KEY}&lat=${lat}&lon=${lon}`)
       .then((res) => res.json())
       .then((data) => {
+        localStorage.setItem("currentCity", data[0].name);
         getCurrentWeather(data[0].name);
         getWeekWeather(data[0].name);
       })
       .catch((error) => {
-        document.querySelector(".weather-info-wrapper").style.display = "none";
-        document.querySelector(".error-message").style.display = "block";
-        document.querySelector(".error-message-title").innerHTML =
-          "Something went wrong...";
+        showErrorMessage("Something went wrong...");
       });
   };
 
   searchButton.addEventListener("click", () => {
     if (searchField.value) {
-      document.querySelector(".weather-info-wrapper").style.display = "none";
-      document.querySelector(".error-message").style.display = "none";
-      document.getElementById("defaultImage").style.display = "none";
-      document.getElementById("weatherTable").innerHTML = "";
-      document.getElementById("weatherInfoLoader").style.display = "block";
+      showLoader();
       getCurrentWeather(searchField.value);
       getWeekWeather(searchField.value);
     }
   });
+
+  searchField.addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      searchButton.click();
+    }
+  });
 });
+
+setInterval(() => {
+  const currentCity = localStorage.getItem("currentCity");
+  if (currentCity) {
+    getCurrentWeather(currentCity);
+    getWeekWeather(currentCity);
+  }
+}, 1000 * 60 * 60);
