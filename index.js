@@ -119,9 +119,16 @@ const getWeekWeather = (city) => {
       document.getElementById("weatherTable").innerHTML = "";
       showWeatherInfo();
 
-      let filteredData = data.list.filter(
-        (el) => new Date(el.dt_txt.replace(/-/g, "/")).getHours() === 15
-      );
+      let filteredData = data.list.filter((el) => {
+        const date = new Date(el.dt_txt.replace(/-/g, "/"));
+        return (
+          date.getDate() !== new Date().getDate() && date.getHours() === 15
+        );
+      });
+
+      if (filteredData.length < 5) {
+        filteredData.push(data.list[data.list.length - 1]);
+      }
 
       fillInWeatherTable(filteredData);
     })
