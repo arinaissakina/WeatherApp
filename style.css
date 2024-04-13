@@ -9,7 +9,7 @@ body {
   background: #002b3f;
 }
 
-.wrapper {
+.main-card {
   background: linear-gradient(158.8deg, #b0fff8 6.98%, #65ecff 95.55%);
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   width: 90%;

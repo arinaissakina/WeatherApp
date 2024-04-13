@@ -64,7 +64,7 @@ const fillInWeatherTable = (data) => {
     iconElement.src = getWeatherIconUrl(item.weather[0].icon);
     iconElement.classList.add("week-weather-icon");
     let row = table.insertRow();
-    addCell(row, weekDays[new Date(item.dt_txt).getDay()]);
+    addCell(row, weekDays[new Date(item.dt_txt.replace(/-/g, "/")).getDay()]);
     addCell(row, iconElement);
     addCell(row, item.weather[0].description);
     addCell(row, `${Math.round(item.main.temp)}°C`);
@@ -83,7 +83,6 @@ const getCurrentWeather = (city) => {
       }
 
       localStorage.setItem("currentCity", city);
-      document.getElementById("weatherTable").innerHTML = "";
       showWeatherInfo();
 
       document.getElementById("city").innerHTML = data.name;
@@ -100,7 +99,6 @@ const getCurrentWeather = (city) => {
       );
     })
     .catch((error) => {
-      showLoader();
       showErrorMessage("Something went wrong...");
       localStorage.setItem("currentCity", "");
     });
@@ -122,13 +120,12 @@ const getWeekWeather = (city) => {
       showWeatherInfo();
 
       let filteredData = data.list.filter(
-        (el) => new Date(el.dt_txt).getHours() === 15
+        (el) => new Date(el.dt_txt.replace(/-/g, "/")).getHours() === 15
       );
 
       fillInWeatherTable(filteredData);
     })
     .catch((error) => {
-      showLoader();
       showErrorMessage("Something went wrong...");
       localStorage.setItem("currentCity", "");
     });
@@ -152,6 +149,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
   }
 
   function errorFunction() {
+    console.log("Unable to determine geolocation.");
     showDefaultImage();
   }
 
