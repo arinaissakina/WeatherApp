@@ -193,10 +193,6 @@ body {
     display: block;
   }
 
-  .weather-icon-wrapper {
-    min-height: 154px;
-  }
-
   .temperature-header {
     text-align: center !important;
   }
