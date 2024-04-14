@@ -195,6 +195,7 @@ window.addEventListener("DOMContentLoaded", (event) => {
 setInterval(() => {
   const currentCity = localStorage.getItem("currentCity");
   if (currentCity) {
+    showLoader();
     getCurrentWeather(currentCity);
     getWeekWeather(currentCity);
   }
