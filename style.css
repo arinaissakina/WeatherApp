@@ -151,6 +151,10 @@ body {
   font-weight: 600;
 }
 
+.weather-table tr td:last-child {
+  padding-left: 10px;
+}
+
 .week-weather-icon {
   width: 70px;
 }
