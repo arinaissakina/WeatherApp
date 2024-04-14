@@ -59,15 +59,20 @@ const fillInWeatherTable = (data) => {
     return td;
   };
 
-  data.forEach((item) => {
+  data.forEach((item, index) => {
     const iconElement = document.createElement("img");
     iconElement.src = getWeatherIconUrl(item.weather[0].icon);
     iconElement.classList.add("week-weather-icon");
     let row = table.insertRow();
-    addCell(row, weekDays[new Date(item.dt_txt.replace(/-/g, "/")).getDay()]);
+    addCell(
+      row,
+      index === 0
+        ? "Today"
+        : weekDays[new Date(item.dt_txt.replace(/-/g, "/")).getDay()]
+    );
     addCell(row, iconElement);
-    addCell(row, item.weather[0].description);
     addCell(row, `${Math.round(item.main.temp)}°C`);
+    addCell(row, item.weather[0].description);
   });
 };
 
@@ -121,12 +126,10 @@ const getWeekWeather = (city) => {
 
       let filteredData = data.list.filter((el) => {
         const date = new Date(el.dt_txt.replace(/-/g, "/"));
-        return (
-          date.getDate() !== new Date().getDate() && date.getHours() === 12
-        );
+        return date.getHours() === 12;
       });
 
-      if (filteredData.length < 5) {
+      if (filteredData.length < 6) {
         filteredData.push(data.list[data.list.length - 1]);
       }
 
